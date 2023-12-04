@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View, Pressable } from "react-native";
+import { Link } from "expo-router";
 
 const days = [...Array(24)].map((val, index) => index + 1);
 
@@ -9,9 +10,13 @@ type DataListItem = {
 
 export default function DataListItem({ day }: DataListItem) {
   return (
-    <View style={styles.box}>
+    <Link href={`/day${day}`} asChild >
+    <Pressable style={styles.box}>
       <Text style={styles.text}>{day}</Text>
-    </View>
+
+      
+    </Pressable>
+    </Link>
   );
 }
 
