@@ -1,31 +1,38 @@
-import { Stack } from "expo-router";
-import { useFonts, Inter_900Black } from "@expo-google-fonts/inter";
+import { Stack } from 'expo-router';
+import { useEffect } from 'react';
+import { useFonts, Inter_900Black, Inter_400Regular, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 import {
-    AmaticSC_400Regular,
-    AmaticSC_700Bold,
-  } from "@expo-google-fonts/amatic-sc";
-  import { useEffect } from "react";
-  import * as SplashScreen from "expo-splash-screen";
+  AmaticSC_400Regular,
+  AmaticSC_700Bold,
+} from '@expo-google-fonts/amatic-sc';
+
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [fontLoaded, fontError] = useFonts({
-    Inter: Inter_900Black,
+  const [fontsLoaded, fontError] = useFonts({
+    Inter: Inter_400Regular,
+    InterSemi: Inter_600SemiBold, 
+    InterBold: Inter_700Bold,   
+    InterBlack: Inter_900Black,
     Amatic: AmaticSC_400Regular,
     AmaticBold: AmaticSC_700Bold,
   });
 
   useEffect(() => {
-    if (fontLoaded || fontError) {
+    if (fontsLoaded || fontError) {
       SplashScreen.hideAsync();
     }
-  }, [fontLoaded, fontError]);
+  }, [fontsLoaded, fontError]);
 
-  if (!fontLoaded && !fontError) {
+  if (!fontsLoaded && !fontError) {
     return null;
   }
+
   return (
     <Stack screenOptions={{}}>
-      <Stack.Screen name="index" options={{ title: "Devember" }} />
+      <Stack.Screen name="index" options={{ title: 'DEVember' }} />
     </Stack>
   );
 }

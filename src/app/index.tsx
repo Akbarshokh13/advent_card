@@ -1,13 +1,10 @@
-import { FlatList, StyleSheet, View } from "react-native";
-import DataListItem from "../components/core/DayListItem";
-import * as SplashScreen from "expo-splash-screen";
-
-SplashScreen.preventAutoHideAsync();
+import { FlatList, StyleSheet, View} from "react-native";
+import DataListItem from "@components/core/DayListItem";
+import { StatusBar } from "expo-status-bar";
 
 const days = [...Array(24)].map((val, index) => index + 1);
 
 export default function HomeScreen() {
-
   return (
     <View style={styles.container}>
       <FlatList
@@ -17,7 +14,9 @@ export default function HomeScreen() {
         numColumns={2}
         renderItem={({ item }) => <DataListItem day={item} />}
       />
-    </View>
+      
+      <StatusBar style="auto"/>
+    </View>   
   );
 }
 
