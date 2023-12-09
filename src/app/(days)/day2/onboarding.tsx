@@ -8,26 +8,34 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
-import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
-import { GestureDetector, Gesture, Directions} from "react-native-gesture-handler";
+import {
+  GestureDetector,
+  Gesture,
+  Directions,
+} from "react-native-gesture-handler";
+import Animated, {
+  FadeIn,
+  FadeOut,
+  SlideOutLeft,
+  SlideInRight,
+} from "react-native-reanimated";
 
 const onboardingSteps = [
   {
-    icon: "snowflake-4",
+    icon: "snowflake",
     title: "Welcome to #DEVember",
     description:
-      " Monitor your spending and contribution, ensuring every penny aligns with your familys aspirations",
+      "Monitor your spending and contribution, ensuring every penny aligns with your familys aspirations",
   },
   {
-    icon: "cast-for-education",
+    icon: "react",
     title: "Learn and grow together",
     description: "Learn by building 24 projects with React Native and Expo",
   },
   {
-    icon: "people-arrows",
+    icon: "money-symbol",
     title: "Education for children",
     description:
       "Contribute to the fundraser ''Education for children'' to help Save the Children",
@@ -48,19 +56,34 @@ const onboarding = () => {
     }
   };
 
+  const onBack = () => {
+    const isFirstScreen = screenIndex === 0;
+    if (isFirstScreen) {
+      endOnboarding();
+    } else {
+      setScreenIndex(screenIndex - 1);
+    }
+  };
+
   const endOnboarding = () => {
     setScreenIndex(0);
     router.back();
   };
 
-  const fling = Gesture.Fling(); 
-  // fling.direction(Directions.RIGHT | Directions.LEFT);
+  const flingForward = Gesture.Fling();
+  flingForward.direction(Directions.LEFT).onEnd(onContinue);
+
+  const flingBackward = Gesture.Fling();
+  flingBackward.direction(Directions.RIGHT).onEnd(onBack);
+
+  const swipes = Gesture.Simultaneous(flingBackward, flingForward);
 
   return (
     <SafeAreaView style={styles.page}>
       <View style={styles.stepIndicatorContainer}>
         {onboardingSteps.map((step, index) => (
           <View
+            key={index}
             style={[
               styles.stepIndicator,
               { backgroundColor: index === screenIndex ? "#CEF202" : "gray" },
@@ -71,18 +94,35 @@ const onboarding = () => {
       <Stack.Screen options={{ headerShown: false }} />
       <StatusBar style="light" />
 
-      <GestureDetector gesture={fling}>
-        <View style={styles.pageContent}>
+      <GestureDetector gesture={swipes}>
+        <Animated.View
+          entering={FadeIn}
+          exiting={FadeOut}
+          style={styles.pageContent}
+          key={screenIndex}
+        >
           <Fontisto
-            name="snowflake-4"
-            size={100}
+            name={data.icon}
+            size={150}
             style={styles.image}
             color="#CEF202"
           />
 
           <View style={styles.footer}>
-            <Text style={styles.title}>{data.title}</Text>
-            <Text style={styles.description}>{data.description}</Text>
+            <Animated.Text
+              entering={SlideInRight}
+              exiting={SlideOutLeft}
+              style={styles.title}
+            >
+              {data.title}
+            </Animated.Text>
+            <Animated.Text
+              entering={SlideInRight.delay(50)}
+              exiting={SlideOutLeft}
+              style={styles.description}
+            >
+              {data.description}
+            </Animated.Text>
             <View style={styles.buttonsRow}>
               <Pressable>
                 <Text onPress={endOnboarding} style={styles.buttonText}>
@@ -96,7 +136,7 @@ const onboarding = () => {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </Animated.View>
       </GestureDetector>
     </SafeAreaView>
   );
@@ -147,7 +187,7 @@ const styles = StyleSheet.create({
   image: {
     alignSelf: "center",
     margin: 20,
-    marginTop: 50,
+    marginTop: 70,
   },
   footer: {
     marginTop: "auto",
