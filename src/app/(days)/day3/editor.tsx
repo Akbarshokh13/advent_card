@@ -27,7 +27,14 @@ const EditorScreen = () => {
             { borderColor: tab === "edit" ? "#D2691E" : "gray" },
           ]}
         >
-          <Text style={styles.tabText}>Edit</Text>
+          <Text
+            style={[
+              styles.tabText,
+              { color: tab === "edit" ? "#D2691E" : "gray" },
+            ]}
+          >
+            Edit
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => setTab("preview")}
@@ -36,7 +43,14 @@ const EditorScreen = () => {
             { borderColor: tab === "preview" ? "#D2691E" : "gray" },
           ]}
         >
-          <Text style={styles.tabText}>Preview</Text>
+          <Text
+            style={[
+              styles.tabText,
+              { color: tab === "preview" ? "#D2691E" : "gray" },
+            ]}
+          >
+            Preview
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -59,7 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: "whitesmoke",
     flex: 1,
     padding: 10,
-    borderRadius: 10
+    borderRadius: 10,
   },
   input: {
     backgroundColor: "white",
