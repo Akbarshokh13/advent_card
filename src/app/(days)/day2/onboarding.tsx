@@ -102,7 +102,7 @@ const onboarding = () => {
           key={screenIndex}
         >
           <Fontisto
-            name={data.icon}
+            nname={data.icon}
             size={150}
             style={styles.image}
             color="#CEF202"
