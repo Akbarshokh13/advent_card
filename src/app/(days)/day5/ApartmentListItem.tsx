@@ -1,9 +1,18 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, ViewStyle } from "react-native";
 import React from "react";
+import apartments from "@assets/data/day5/apartments.json";
 
-const ApartmentListItem = ({ apartment }) => {
+type ApartmentListItem = {
+  apartment: (typeof apartments)[0];
+  containerStyle?: ViewStyle;
+};
+
+const ApartmentListItem = ({
+  apartment,
+  containerStyle,
+}: ApartmentListItem) => {
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, containerStyle]}>
       <Image source={{ uri: apartment.image }} style={styles.image} />
       <View style={styles.rightContainer}>
         <Text style={styles.title}>{apartment.title}</Text>
@@ -22,7 +31,7 @@ const ApartmentListItem = ({ apartment }) => {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: "white",
-    flexDirection: 'row', 
+    flexDirection: "row",
     borderRadius: 20,
     overflow: "hidden",
   },
