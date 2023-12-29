@@ -6,7 +6,6 @@ import CustomMarker from "@/components/day5/CustomMarker";
 import ApartmentListItem from "./ApartmentListItem";
 import { useState, useMemo } from "react";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import { FlatList } from "react-native-gesture-handler";
 
 export default function airbnb() {
   const [selectedApartment, setSelectedApartment] = useState(null);
