@@ -2,16 +2,17 @@ import {
   View,
   Text,
   StyleSheet,
-  Pressable,
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  Button,
 } from "react-native";
 import React, { useState } from "react";
 import { Stack } from "expo-router";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import NewTaskInput from "@/components/day6/NewTaskInput";
 import { SafeAreaView } from "react-native-safe-area-context";
+import TaskListItem from "@/components/day6/TaskListItem";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 export type Task = {
   title: string;
@@ -43,7 +44,28 @@ const dummyTasks: Task[] = [
 
 const TodoScrenn = () => {
   const [tasks, setTasks] = useState<Task[]>(dummyTasks);
-  const [newTask, setNewTask] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [tab, setTab] = useState<"All" | "Todo" | "Finished">("All");
+  const headerHeight = useHeaderHeight();
+
+  const filteredTasks = tasks.filter((task) => {
+    if (task.isFinished && tab === "Todo") {
+      return false;
+    }
+
+    if (!task.isFinished && tab === "Finished") {
+      return false;
+    }
+
+    if (!searchQuery) {
+      return true;
+    }
+
+    return task.title
+      .toLowerCase()
+      .trim()
+      .includes(searchQuery.toLowerCase().trim());
+  });
 
   const onItemPressed = (index: number) => {
     setTasks((currentTasks) => {
@@ -53,43 +75,55 @@ const TodoScrenn = () => {
     });
   };
 
+  const deleteTask = (index: number) => {
+    setTasks((currentTasks) => {
+      const updatedTasks = [...currentTasks];
+      updatedTasks.splice(index, 1);
+      return updatedTasks;
+    });
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.page}
     >
-      <Stack.Screen options={{ headerShown: false }} />
-      <SafeAreaView>
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          title: "Todo",
+          headerBackTitleVisible: false,
+          headerSearchBarOptions: {
+            hideWhenScrolling: true,
+            onChangeText: (e) => setSearchQuery(e.nativeEvent.text),
+          },
+        }}
+      />
+      <SafeAreaView
+        edges={["bottom"]}
+        style={{ flex: 1, paddingTop: headerHeight + 35 }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            marginTop: 10,
+            justifyContent: "space-around",
+          }}
+        >
+          <Button title="All" onPress={() => setTab("All")} />
+          <Button title="Todo" onPress={() => setTab("Todo")} />
+          <Button title="Completed" onPress={() => setTab("Finished")} />
+        </View>
         <FlatList
           contentContainerStyle={{ gap: 5, padding: 10 }}
-          data={tasks}
+          keyExtractor={(item) => item.title}
+          data={filteredTasks}
           renderItem={({ item, index }) => (
-            <Pressable
-              onPress={() => onItemPressed(index)}
-              style={styles.taskContainer}
-            >
-              <MaterialCommunityIcons
-                name={
-                  item.isFinished
-                    ? "checkbox-marked-circle-outline"
-                    : "checkbox-blank-circle-outline"
-                }
-                size={24}
-                color="dimgray"
-              />
-              <Text
-                style={[
-                  styles.taskTitle,
-                  {
-                    textDecorationLine: item.isFinished
-                      ? "line-through"
-                      : "none",
-                  },
-                ]}
-              >
-                {item.title}
-              </Text>
-            </Pressable>
+            <TaskListItem
+              task={item}
+              onItemPressed={() => onItemPressed(index)}
+              onDelete={() => deleteTask(index)}
+            />
           )}
           ListFooterComponent={() => (
             <NewTaskInput
@@ -107,23 +141,6 @@ const TodoScrenn = () => {
 const styles = StyleSheet.create({
   page: {
     backgroundColor: "white",
-    flex: 1,
-  },
-  taskContainer: {
-    padding: 10,
-    // margin: 8,
-    // borderWidth: 1,
-    // borderRadius: 6,
-    paddingHorizontal: 10,
-    borderColor: "gray",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  taskTitle: {
-    fontFamily: "InterSemi",
-    fontSize: 15,
-    color: "dimgray",
     flex: 1,
   },
 });
